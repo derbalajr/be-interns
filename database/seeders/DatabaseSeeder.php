@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,13 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        $manager = User::factory()->create([
             'name' => 'Demo Manager',
             'email' => 'manager@crm.test',
             'password' => 'password',
         ]);
 
-        User::factory()
+        $agents = User::factory()
             ->count(5)
             ->sequence(
                 ['name' => 'Mariam Hassan'],
@@ -30,6 +31,11 @@ class DatabaseSeeder extends Seeder
                 ['name' => 'Omar Khaled'],
                 ['name' => 'Nour Adel'],
             )
+            ->create();
+
+        Lead::factory()
+            ->count(30)
+            ->recycle($agents)
             ->create();
     }
 }
