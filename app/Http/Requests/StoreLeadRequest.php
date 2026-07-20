@@ -66,7 +66,7 @@ class StoreLeadRequest extends FormRequest
             ],
 
             'agent_id' => [
-                'required',
+                'nullable',
                 'integer',
                 'exists:users,id',
             ],

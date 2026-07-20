@@ -24,9 +24,9 @@ return new class extends Migration
             $table->decimal('budget', 12, 2)->nullable();
 
             $table->foreignId('agent_id')
+                ->nullable()
                 ->constrained('users')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+                ->nullOnDelete();
 
             $table->timestamps();
             $table->softDeletes();

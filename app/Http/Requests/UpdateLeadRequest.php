@@ -73,7 +73,7 @@ class UpdateLeadRequest extends FormRequest
 
             'agent_id' => [
                 'sometimes',
-                'required',
+                'nullable',
                 'integer',
                 'exists:users,id',
             ],
