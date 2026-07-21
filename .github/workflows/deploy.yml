@@ -1,0 +1,44 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # - uses: shivammathur/setup-php@v2
+      #   with:
+      #     php-version: 8.4
+      #     extensions: mbstring, xml, ctype, json, bcmath
+      #     coverage: none
+
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #     cache: npm
+
+      # - name: Install PHP dependencies
+      #   run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # - name: Install Node dependencies
+      #   run: npm ci
+
+      # - name: Lint
+      #   run: ./vendor/bin/pint --test
+      #   continue-on-error: true
+
+      # - name: Test
+      #   run: php artisan test
+      #   env:
+      #     DB_CONNECTION: sqlite
+      #     DB_DATABASE: ":memory:"
+
+      - name: Deploy to Forge
+        if: success()
+        run: curl -s "${{ secrets.FORGE_DEPLOY_URL }}"

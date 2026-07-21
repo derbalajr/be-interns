@@ -5,6 +5,7 @@ use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProjectController;
 
 Route::get('/health', function () {
     return response()->json([
@@ -21,6 +22,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    // Assign / Reassign Lead
+    Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);
+
+    // Lead CRUD
+    Route::apiResource('leads', LeadController::class);
+});
+
+Route::middleware(['auth'])->group(function () {
+
     Route::apiResource('leads', LeadController::class);
 
     Route::get('/roles', [RoleController::class, 'index']);
@@ -29,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
     Route::get('/permissions', [PermissionController::class, 'index']);
+    Route::apiResource('projects', ProjectController::class);
+
 });
 
 Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {

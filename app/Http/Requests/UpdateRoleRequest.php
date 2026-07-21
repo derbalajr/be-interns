@@ -9,7 +9,8 @@ class UpdateRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-return $this->user() && $this->user()->can('edit-roles');    }
+        return $this->user() && $this->user()->can('edit-roles');
+    }
 
     public function rules(): array
     {
@@ -17,10 +18,11 @@ return $this->user() && $this->user()->can('edit-roles');    }
         $role = $this->route('role'); 
 
         return [
-            // Look up the role ID to ignore it during the unique check
             'name' => [
                 'required',
                 'string',
+                'min:3',
+                'max:50',
                 Rule::unique('roles', 'name')->ignore($role),
             ],
             'permissions' => 'nullable|array',
