@@ -12,65 +12,30 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $password = 'password123';
+        // 1. Create Admin
+        $admin = User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@crm.com',
+            'password' => Hash::make('password'),
+            
+        ]);
+        $admin->assignRole('admin');
 
-        $users = [
-            [
-                'name' => 'Yasmine',
-                'email' => 'yasmine.46y@gmail.com',
-                'role' => 'super-admin',
-            ],
-            [
-                'name' => 'Lomy',
-                'email' => 'lomy18106@gmail.com',
-                'role' => 'super-admin',
-            ],
-            [
-                'name' => 'Daniel',
-                'email' => 'Danielnagy589@gmail.com',
-                'role' => 'super-admin',
-            ],
-            [
-                'name' => 'Salma',
-                'email' => 'salma.waled@addressinv.com',
-                'role' => 'super-admin',
-            ],
-            [
-                'name' => 'Gamila',
-                'email' => 'gamila.mamdouh@addressinv.com',
-                'role' => 'super-admin',
-            ],
-            [
-                'name' => 'Lala',
-                'email' => 'lala@lala.lala',
-                'role' => 'super-admin',
-            ],
+        // 2. Create Manager
+        $manager = User::factory()->create([
+            'name' => 'Manager User',
+            'email' => 'manager@crm.com',
+            'password' => Hash::make('password'),
+            'tenant' => 'tai',
+        ]);
+        $manager->assignRole('manager');
 
-            // Test Manager
-            [
-                'name' => 'Test Manager',
-                'email' => 'manager@test.com',
-                'role' => 'manager',
-            ],
-
-            // Test Agent
-            [
-                'name' => 'Test Agent',
-                'email' => 'agent@test.com',
-                'role' => 'agent',
-            ],
-        ];
-
-        foreach ($users as $data) {
-            $user = User::firstOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'password' => $password,
-                ]
-            );
-
-            $user->syncRoles([$data['role']]);
-        }
+        // 3. Create Agent
+        $agent = User::factory()->create([
+            'name' => 'Agent User',
+            'email' => 'agent@crm.com',
+            'password' => Hash::make('password'),
+        ]);
+        $agent->assignRole('agent');
     }
 }
