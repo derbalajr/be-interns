@@ -5,6 +5,7 @@ use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProjectController;
 
 Route::get('/health', function () {
     return response()->json([
@@ -38,4 +39,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Permissions Endpoints
     Route::get('/permissions', [PermissionController::class, 'index']);
+    Route::apiResource('projects', ProjectController::class);
+
 });
