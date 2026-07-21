@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Http\Resources\LeadCollection;
@@ -14,13 +15,20 @@ class LeadController extends Controller
 {
     public function index(Request $request): LeadCollection
     {
+        $this->authorize('viewAny', Lead::class);
+
         $perPage = min(
             max($request->integer('per_page', 15), 1),
             100,
         );
 
-        $leads = Lead::query()
-            ->with('agent')
+        $query = Lead::query()->with('agent');
+
+        if ($request->user()->isAgent()) {
+            $query->where('agent_id', $request->user()->id);
+        }
+
+        $leads = $query
             ->latest()
             ->paginate($perPage);
 
@@ -38,6 +46,8 @@ class LeadController extends Controller
 
     public function show(Lead $lead): LeadResource
     {
+        $this->authorize('view', $lead);
+
         $lead->load('agent');
 
         return new LeadResource($lead);
@@ -47,7 +57,24 @@ class LeadController extends Controller
         UpdateLeadRequest $request,
         Lead $lead,
     ): LeadResource {
+        $this->authorize('update', $lead);
+
         $lead->update($request->validated());
+
+        $lead->load('agent');
+
+        return new LeadResource($lead);
+    }
+
+    public function assign(
+        AssignLeadRequest $request,
+        Lead $lead,
+    ): LeadResource {
+        $this->authorize('update', $lead);
+
+        $lead->update([
+            'agent_id' => $request->validated('agent_id'),
+        ]);
 
         $lead->load('agent');
 
@@ -56,6 +83,8 @@ class LeadController extends Controller
 
     public function destroy(Lead $lead): JsonResponse
     {
+        $this->authorize('delete', $lead);
+
         $lead->delete();
 
         return response()->json([
