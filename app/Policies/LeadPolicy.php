@@ -8,6 +8,14 @@ use App\Models\User;
 class LeadPolicy
 {
     /**
+     * Grant all abilities to super-admins before checking other policy methods.
+     */
+    public function before(User $user): ?bool
+    {
+        return $user->hasRole('super-admin') ? true : null;
+    }
+
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
