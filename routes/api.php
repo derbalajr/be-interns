@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
@@ -20,17 +20,20 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-    Route::apiResource('leads', LeadController::class);
-});
-Route::middleware(['auth'])->group(function () {
 
-    // Roles CRUD Endpoints
+    Route::apiResource('leads', LeadController::class);
+
     Route::get('/roles', [RoleController::class, 'index']);
     Route::post('/roles', [RoleController::class, 'store']);
-    Route::put('/roles/{role}', [RoleController::class, 'update']);    // <-- Edit Route
-    Route::delete('/roles/{role}', [RoleController::class, 'destroy']); // <-- Delete Route
+    Route::put('/roles/{role}', [RoleController::class, 'update']);
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
-    // Permissions Endpoints
     Route::get('/permissions', [PermissionController::class, 'index']);
-
 });
+
+Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+});
+;

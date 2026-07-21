@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -31,7 +31,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-        ];
+            'active' => 'boolean'
+            ,
+            ];
     }
     public function isAdmin(): bool
     {
@@ -46,9 +48,10 @@ class User extends Authenticatable
     public function isAgent(): bool
     {
         return $this->hasRole('agent');
-
+    }
     public function leads(): HasMany
     {
         return $this->hasMany(Lead::class, 'agent_id');
     }
+
 }

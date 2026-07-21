@@ -4,18 +4,23 @@ namespace Database\Seeders;
 
 use App\Models\Lead;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+        ]);
+
         $manager = User::factory()->create([
             'name' => 'Demo Manager',
             'email' => 'manager@crm.test',
             'password' => 'password',
         ]);
+
+        $manager->assignRole('manager');
 
         $agents = User::factory()
             ->count(5)
@@ -27,6 +32,10 @@ class DatabaseSeeder extends Seeder
                 ['name' => 'Nour Adel'],
             )
             ->create();
+
+        foreach ($agents as $agent) {
+            $agent->assignRole('agent');
+        }
 
         Lead::factory()
             ->count(30)
