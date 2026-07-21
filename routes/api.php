@@ -20,17 +20,22 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+
+    // Assign / Reassign Lead
+    Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);
+
+    // Lead CRUD
     Route::apiResource('leads', LeadController::class);
 });
+
 Route::middleware(['auth'])->group(function () {
 
     // Roles CRUD Endpoints
     Route::get('/roles', [RoleController::class, 'index']);
     Route::post('/roles', [RoleController::class, 'store']);
-    Route::put('/roles/{role}', [RoleController::class, 'update']);    // <-- Edit Route
-    Route::delete('/roles/{role}', [RoleController::class, 'destroy']); // <-- Delete Route
+    Route::put('/roles/{role}', [RoleController::class, 'update']);
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
     // Permissions Endpoints
     Route::get('/permissions', [PermissionController::class, 'index']);
-
 });
