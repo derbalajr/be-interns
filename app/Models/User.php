@@ -46,7 +46,7 @@ class User extends Authenticatable
     public function isAgent(): bool
     {
         return $this->hasRole('agent');
-
+    }
     public function leads(): HasMany
     {
         return $this->hasMany(Lead::class, 'agent_id');

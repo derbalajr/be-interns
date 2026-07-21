@@ -21,7 +21,6 @@ class AuthController extends Controller
         }
 
         /** @var User $user */
-        $user = Auth::user();
 
         $token = $user->createToken('api')->plainTextToken;
 
