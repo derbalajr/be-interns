@@ -26,13 +26,13 @@ class UpdateProjectRequest extends FormRequest
 
         return [
             'name' => [
-                'required',
+                'sometimes',
                 'string',
                 'min:3',
                 'max:255',
                 Rule::unique('projects', 'name')->ignore($project),
             ],
-            'location' => 'required|string|min:2|max:255',
+            'location' => 'sometimes|string|min:2|max:255',
             'description' => 'nullable|string|max:1000',
         ];
 }

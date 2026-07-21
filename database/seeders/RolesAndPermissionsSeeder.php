@@ -44,7 +44,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $managerRole->syncPermissions(['view-users', 'create-users', 'edit-users','view-roles', 'view-permissions','edit-roles','delete-roles', 'create-projects', 'update-projects', 'delete-projects', 'view-projects']); // Managers have broader permissions
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
-        $adminRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'delete-users']);
+        $adminRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'delete-users', 'view-roles', 'view-permissions', 'view-projects']); // Admins have full permissions
         // syncPermissions ensures permissions are assigned cleanly without duplicating pivot table rows
         $superAdminRole->syncPermissions(Permission::all());
     }
