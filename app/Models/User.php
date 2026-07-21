@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-Use App\Enums\UserRole;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -46,6 +45,7 @@ class User extends Authenticatable
     public function isAgent(): bool
     {
         return $this->hasRole('agent');
+    }
 
     public function leads(): HasMany
     {
