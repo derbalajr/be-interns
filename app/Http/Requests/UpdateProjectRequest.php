@@ -26,7 +26,7 @@ class UpdateProjectRequest extends FormRequest
 
         return [
             'name' => [
-                'sometimes',
+                'required',
                 'string',
                 'min:3',
                 'max:255',
