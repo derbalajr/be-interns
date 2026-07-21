@@ -34,7 +34,7 @@ Route::middleware('auth:api')->group(function () {
     // Tenant: TAI
     Route::middleware('tenant:tai')->group(function () {
         Route::apiResource('leads', LeadController::class);
-    });
+        Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);    });
 
     // Tenant: MARQ
     Route::middleware('tenant:marq')->group(function () {
