@@ -29,6 +29,12 @@ class LoginRequest extends FormRequest
                 'required',
                 'string',
             ],
+
+            'workspace' => [
+                'nullable',
+                'string',
+                'in:the-address,marq',
+            ],
         ];
     }
 }
