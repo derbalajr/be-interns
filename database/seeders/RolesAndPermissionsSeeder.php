@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -28,7 +28,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'create-projects',
             'update-projects',
             'delete-projects',
-            'view-projects'
+            'view-projects',
         ];
 
         foreach ($permissions as $permission) {
@@ -41,7 +41,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $agentRole = Role::firstOrCreate(['name' => 'agent']);
         $agentRole->syncPermissions(['view-users', 'view-projects']); // Agents can view users and projects
         $managerRole = Role::firstOrCreate(['name' => 'manager']);
-        $managerRole->syncPermissions(['view-users', 'create-users', 'edit-users','view-roles', 'view-permissions','edit-roles','delete-roles', 'create-projects', 'update-projects', 'delete-projects', 'view-projects']); // Managers have broader permissions
+        $managerRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'view-roles', 'view-permissions', 'edit-roles', 'delete-roles', 'create-projects', 'update-projects', 'delete-projects', 'view-projects']); // Managers have broader permissions
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $adminRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'delete-users', 'view-roles', 'view-permissions', 'view-projects']); // Admins have full permissions

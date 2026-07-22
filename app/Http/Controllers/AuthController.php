@@ -10,6 +10,24 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * Login
+     *
+     * Authenticate a user using their email and password.
+     *
+     * After a successful login, a Sanctum API token is returned.
+     *
+     * @group Authentication
+     *
+     * @response 200 {
+     *   "user": {
+     *     "id": 1,
+     *     "name": "Salma Ibrahim",
+     *     "email": "salma@example.com"
+     *   },
+     *   "token": "1|abcdefghijklmnopqrstuvwxyz"
+     * }
+     */
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -21,7 +39,6 @@ class AuthController extends Controller
         }
 
         /** @var User $user */
-
         $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
@@ -30,6 +47,19 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Logout
+     *
+     * Logs out the currently authenticated user by revoking their current API token.
+     *
+     * @group Authentication
+     *
+     * @authenticated
+     *
+     * @response 200 {
+     *   "message": "Logged out successfully."
+     * }
+     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -39,6 +69,15 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Current User
+     *
+     * Returns the authenticated user's profile.
+     *
+     * @group Authentication
+     *
+     * @authenticated
+     */
     public function me(Request $request)
     {
         return new UserResource($request->user());

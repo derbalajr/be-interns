@@ -19,8 +19,10 @@ use App\Models\Scopes\TenantScope;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
+
     protected string $guard_name = 'api';
+
     /**
      * Get the attributes that should be cast.
      *
@@ -33,6 +35,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');

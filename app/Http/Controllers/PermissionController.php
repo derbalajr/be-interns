@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
+
 class PermissionController extends Controller
 {
     /**
@@ -13,7 +15,8 @@ class PermissionController extends Controller
         Gate::authorize('view-permissions');
 
         $permissions = Permission::all();
+
         return response()->json(['success' => true, 'data' => $permissions], 200);
-    
+
     }
 }

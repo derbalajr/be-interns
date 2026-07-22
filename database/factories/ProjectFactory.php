@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -8,7 +9,7 @@ class ProjectFactory extends Factory
 {
     public function definition(): array
     {
-        $name = fake()->company() . ' Compound';
+        $name = fake()->company().' Compound';
 
         return [
             'name' => $name,
@@ -18,4 +19,3 @@ class ProjectFactory extends Factory
         ];
     }
 }
-

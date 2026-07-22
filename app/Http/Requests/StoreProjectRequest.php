@@ -12,7 +12,8 @@ class StoreProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->can('create-projects');    }
+        return $this->user() && $this->user()->can('create-projects');
+    }
 
     /**
      * Get the validation rules that apply to the request.
