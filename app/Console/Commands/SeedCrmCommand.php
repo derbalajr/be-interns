@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Console\Command;
 
 class SeedCrmCommand extends Command
@@ -24,10 +25,7 @@ class SeedCrmCommand extends Command
     {
         $this->info('Starting CRM roles and permissions seeding...');
 
-        // Call ONLY the RolesAndPermissionsSeeder directly
-        $this->call('db:seed', [
-            '--class' => 'RolesAndPermissionsSeeder',
-        ]);
+        (new RolesAndPermissionsSeeder)->run();
 
         $this->info('✅ CRM roles and permissions seeded successfully!');
 
