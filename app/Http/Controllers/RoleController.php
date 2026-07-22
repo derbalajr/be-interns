@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; // Use standard Laravel Request here
-use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\StoreRoleRequest; // Use standard Laravel Request here
 use App\Http\Requests\UpdateRoleRequest;
-use Spatie\Permission\Models\Role;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Role;
+
 class RoleController extends Controller
 {
     /**
@@ -13,9 +15,10 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        Gate::authorize('view-roles'); 
+        Gate::authorize('view-roles');
 
         $roles = Role::with('permissions')->get();
+
         return response()->json(['success' => true, 'data' => $roles], 200);
     }
 
@@ -26,13 +29,13 @@ class RoleController extends Controller
     {
         // Authorization is already handled inside StoreRoleRequest
         $validated = $request->validated();
-        
+
         $role = Role::create([
-            'name' => $validated['name'], 
-            'guard_name' => 'api'
+            'name' => $validated['name'],
+            'guard_name' => 'api',
         ]);
 
-        if (!empty($validated['permissions'])) {
+        if (! empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
         }
 
@@ -46,7 +49,7 @@ class RoleController extends Controller
     {
         // Authorization is already handled inside UpdateRoleRequest
         $validated = $request->validated();
-        
+
         $role->update(['name' => $validated['name']]);
         $role->syncPermissions($validated['permissions'] ?? []);
 
@@ -66,6 +69,7 @@ class RoleController extends Controller
         }
 
         $role->delete();
+
         return response()->json(['success' => true, 'message' => 'Role deleted successfully.'], 200);
     }
 }

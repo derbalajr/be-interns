@@ -26,7 +26,7 @@ class SeedCrmCommand extends Command
 
         // Call ONLY the RolesAndPermissionsSeeder directly
         $this->call('db:seed', [
-            '--class' => 'RolesAndPermissionsSeeder'
+            '--class' => 'RolesAndPermissionsSeeder',
         ]);
 
         $this->info('✅ CRM roles and permissions seeded successfully!');

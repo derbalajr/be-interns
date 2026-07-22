@@ -31,6 +31,7 @@ class LoginRequest extends FormRequest
             ],
         ];
     }
+
     public function bodyParameters(): array
     {
         return [

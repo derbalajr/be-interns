@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeadController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RoleController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
     return response()->json([
@@ -28,8 +28,8 @@ Route::middleware(['auth'])->group(function () {
     // Roles CRUD Endpoints
     Route::get('/roles', [RoleController::class, 'index']);
     Route::post('/roles', [RoleController::class, 'store']);
-    Route::put('/roles/{role}', [RoleController::class, 'update']);    
-    Route::delete('/roles/{role}', [RoleController::class, 'destroy']); 
+    Route::put('/roles/{role}', [RoleController::class, 'update']);
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
     // Permissions Endpoints
     Route::get('/permissions', [PermissionController::class, 'index']);
