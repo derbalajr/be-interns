@@ -38,6 +38,17 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Validate workspace matches user's tenant
+        $workspace = $request->workspace;
+        if ($workspace) {
+            $expectedTenant = $workspace === 'the-address' ? 'tai' : 'marq';
+            if ($user->tenant !== $expectedTenant) {
+                return response()->json([
+                    'message' => 'This user does not belong to the selected workspace.',
+                ], 403);
+            }
+        }
+
         /** @var User $user */
         $token = $user->createToken('api')->plainTextToken;
 
