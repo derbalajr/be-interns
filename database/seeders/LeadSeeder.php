@@ -22,6 +22,7 @@ class LeadSeeder extends Seeder
                 'phone' => '01012345678',
                 'source' => 'website',
                 'stage' => LeadStage::New,
+                'budget' => 500000,
                 'agent_id' => null,
             ]
         );
@@ -35,6 +36,7 @@ class LeadSeeder extends Seeder
                 'phone' => '01087654321',
                 'source' => 'referral',
                 'stage' => LeadStage::Contacted,
+                'budget' => 750000,
                 'agent_id' => null,
             ]
         );
@@ -46,8 +48,9 @@ class LeadSeeder extends Seeder
             [
                 'name' => 'Omar Hassan',
                 'phone' => '01111111111',
-                'source' => 'phone_call',
+                'source' => 'social_media',
                 'stage' => LeadStage::Qualified,
+                'budget' => 1000000,
                 'agent_id' => null,
             ]
         );

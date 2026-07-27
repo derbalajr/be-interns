@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Lead::class, 'agent_id');
     }
+
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class, 'agent_id');
+    }
 }

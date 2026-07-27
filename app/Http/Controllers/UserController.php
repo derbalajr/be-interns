@@ -8,12 +8,16 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
     public function index(Request $request): UserCollection
     {
+        Gate::authorize('view-users');
+
         $perPage = min(
             max($request->integer('per_page', 15), 1),
             100,
@@ -85,5 +89,14 @@ class UserController extends Controller
         return new UserResource(
             $user->fresh()->load('roles')
         );
+    }
+
+    public function destroy(User $user): Response
+    {
+        Gate::authorize('delete-users');
+
+        $user->delete();
+
+        return response()->noContent();
     }
 }
