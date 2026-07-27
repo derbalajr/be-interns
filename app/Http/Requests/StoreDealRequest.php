@@ -27,6 +27,7 @@ class StoreDealRequest extends FormRequest
             'unit_id' => [
                 'nullable',
                 'integer',
+                'exists:units,id',
             ],
 
             'agent_id' => [

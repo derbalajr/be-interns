@@ -22,6 +22,11 @@ class DealResource extends JsonResource
             'stage' => $this->stage,
             'value' => $this->value,
             'expected_close' => $this->expected_close,
+
+            'lead' => new LeadResource($this->whenLoaded('lead')),
+            'agent' => new UserResource($this->whenLoaded('agent')),
+            'unit' => new UnitResource($this->whenLoaded('unit')),
+
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

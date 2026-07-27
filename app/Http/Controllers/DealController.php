@@ -17,7 +17,7 @@ class DealController extends Controller
         $this->authorize('viewAny', Deal::class);
 
         $query = Deal::query()
-            ->with('lead', 'agent');
+            ->with('lead', 'agent', 'unit');
 
         if ($request->user()->isAgent()) {
             $query->where('agent_id', $request->user()->id);
@@ -34,7 +34,7 @@ class DealController extends Controller
 
         $deal = Deal::create($request->validated());
 
-        $deal->load('lead', 'agent');
+        $deal->load('lead', 'agent', 'unit');
 
         return new DealResource($deal);
     }
@@ -43,7 +43,7 @@ class DealController extends Controller
     {
         $this->authorize('view', $deal);
 
-        $deal->load('lead', 'agent');
+        $deal->load('lead', 'agent', 'unit');
 
         return new DealResource($deal);
     }
@@ -56,7 +56,7 @@ class DealController extends Controller
 
         $deal->update($request->validated());
 
-        $deal->load('lead', 'agent');
+        $deal->load('lead', 'agent', 'unit');
 
         return new DealResource($deal);
     }
