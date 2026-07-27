@@ -1,10 +1,12 @@
 <?php
-use App\Http\Controllers\UserController;
+
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DealController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnitController;
 // Health check
@@ -22,7 +24,7 @@ Route::post('/login', [AuthController::class, 'login'])
 
 // Protected API routes
 Route::middleware('auth:api')->group(function () {
-    
+
     // Auth management
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
@@ -39,7 +41,11 @@ Route::middleware('auth:api')->group(function () {
     // Tenant: TAI
     Route::middleware('tenant:tai')->group(function () {
         Route::apiResource('leads', LeadController::class);
-        Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);    });
+        Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);
+
+        // Deals
+        Route::apiResource('deals', DealController::class);
+    });
 
     Route::apiResource('leads', LeadController::class);
 
@@ -49,7 +55,6 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
     Route::get('/permissions', [PermissionController::class, 'index']);
-    Route::apiResource('projects', ProjectController::class);
 
     // Tenant: MARQ
 Route::middleware('tenant:marq')->group(function () {
@@ -68,4 +73,3 @@ Route::patch(
 });
 
 });
-

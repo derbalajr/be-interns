@@ -34,5 +34,5 @@ class Unit extends Model
     {
         return $this->belongsTo(Project::class);
     }
-    
+
 }
