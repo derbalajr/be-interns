@@ -6,7 +6,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UnitController;
 // Health check
 Route::get('/health', function () {
     return response()->json([
@@ -27,6 +27,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
     // Roles & Permissions CRUD
     Route::apiResource('roles', RoleController::class);
     Route::get('/permissions', [PermissionController::class, 'index']);
@@ -46,16 +51,21 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/permissions', [PermissionController::class, 'index']);
     Route::apiResource('projects', ProjectController::class);
 
-});
-
-Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::put('/users/{user}', [UserController::class, 'update']);
-});
-
-// Tenant: MARQ
+    // Tenant: MARQ
 Route::middleware('tenant:marq')->group(function () {
     Route::apiResource('projects', ProjectController::class);
+    Route::patch(
+    'units/{unit}/reserve',
+    [UnitController::class, 'markReserved']
+);
+
+Route::patch(
+    'units/{unit}/sell',
+    [UnitController::class, 'markSold']
+          );
+    Route::apiResource('units', UnitController::class);
+
+});
+
 });
 
