@@ -19,9 +19,13 @@ class Unit extends Model
 {
     /** @use HasFactory<UnitFactory> */
     use HasFactory;
+
     public const STATUS_AVAILABLE = 'available';
+
     public const STATUS_SOLD = 'sold';
+
     public const STATUS_RESERVED = 'reserved';
+
     protected function casts(): array
     {
         return [
@@ -34,5 +38,4 @@ class Unit extends Model
     {
         return $this->belongsTo(Project::class);
     }
-
 }

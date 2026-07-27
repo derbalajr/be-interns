@@ -35,6 +35,7 @@ class UnitController extends Controller
         $unit = Unit::create($request->validated());
         $unit->load('project');
         $unit->refresh(); // Refresh the model to get the latest data from the database
+
         return new UnitResource($unit);
     }
 
@@ -75,35 +76,36 @@ class UnitController extends Controller
 
         return response()->noContent();
     }
+
     public function markReserved(Unit $unit): UnitResource
-{
-    Gate::authorize('edit-units');
+    {
+        Gate::authorize('edit-units');
 
-    if ($unit->status !== Unit::STATUS_AVAILABLE) {
-        abort(422, 'Only an available unit can be reserved.');
+        if ($unit->status !== Unit::STATUS_AVAILABLE) {
+            abort(422, 'Only an available unit can be reserved.');
+        }
+
+        $unit->status = Unit::STATUS_RESERVED;
+        $unit->save();
+
+        $unit->load('project');
+
+        return new UnitResource($unit);
     }
 
-    $unit->status = Unit::STATUS_RESERVED;
-    $unit->save();
+    public function markSold(Unit $unit): UnitResource
+    {
+        Gate::authorize('edit-units');
 
-    $unit->load('project');
+        if ($unit->status !== Unit::STATUS_RESERVED) {
+            abort(422, 'Only a reserved unit can be sold.');
+        }
 
-    return new UnitResource($unit);
-}
-public function markSold(Unit $unit): UnitResource
-{
-    Gate::authorize('edit-units');
+        $unit->status = Unit::STATUS_SOLD;
+        $unit->save();
 
-    if ($unit->status !== Unit::STATUS_RESERVED) {
-        abort(422, 'Only a reserved unit can be sold.');
+        $unit->load('project');
+
+        return new UnitResource($unit);
     }
-
-    $unit->status = Unit::STATUS_SOLD;
-    $unit->save();
-
-    $unit->load('project');
-
-    return new UnitResource($unit);
-}
-
 }

@@ -12,24 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('units', function (Blueprint $table) {
-    $table->id();
+            $table->id();
 
-    $table->string('code');
-    $table->string('type');
+            $table->string('code');
+            $table->string('type');
 
-    $table->decimal('area', 10, 2);
-    $table->decimal('price', 15, 2);
+            $table->decimal('area', 10, 2);
+            $table->decimal('price', 15, 2);
 
-    $table->string('status')->default('available');
+            $table->string('status')->default('available');
 
-    $table->foreignId('project_id')
-        ->constrained()
-        ->restrictOnDelete();
+            $table->foreignId('project_id')
+                ->constrained()
+                ->restrictOnDelete();
 
-    $table->timestamps();
+            $table->timestamps();
 
-    $table->unique(['project_id', 'code']);
-});
+            $table->unique(['project_id', 'code']);
+        });
     }
 
     /**

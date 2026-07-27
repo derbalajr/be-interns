@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\LeadStage;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class IndexLeadRequest extends FormRequest
 {
@@ -14,7 +16,10 @@ class IndexLeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stage' => ['nullable', 'string'],
+            'stage' => [
+                'nullable',
+                Rule::enum(LeadStage::class),
+            ],
             'source' => ['nullable', 'string'],
             'q' => ['nullable', 'string'],
 

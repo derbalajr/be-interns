@@ -6,9 +6,10 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UnitController;
+
 // Health check
 Route::get('/health', function () {
     return response()->json([
@@ -24,52 +25,50 @@ Route::post('/login', [AuthController::class, 'login'])
 
 // Protected API routes
 Route::middleware('auth:api')->group(function () {
-
     // Auth management
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    // User management
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-    // Roles & Permissions CRUD
+    // Roles and permissions
     Route::apiResource('roles', RoleController::class);
     Route::get('/permissions', [PermissionController::class, 'index']);
 
     // Tenant: TAI
     Route::middleware('tenant:tai')->group(function () {
-        Route::apiResource('leads', LeadController::class);
-        Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);
+        Route::patch('/leads/{lead}/assign', [
+            LeadController::class,
+            'assign',
+        ]);
 
-        // Deals
+        Route::patch('/leads/{lead}/stage', [
+            LeadController::class,
+            'changeStage',
+        ]);
+
+        Route::apiResource('leads', LeadController::class);
         Route::apiResource('deals', DealController::class);
     });
 
-    Route::apiResource('leads', LeadController::class);
-
-    Route::get('/roles', [RoleController::class, 'index']);
-    Route::post('/roles', [RoleController::class, 'store']);
-    Route::put('/roles/{role}', [RoleController::class, 'update']);
-    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
-
-    Route::get('/permissions', [PermissionController::class, 'index']);
-
     // Tenant: MARQ
-Route::middleware('tenant:marq')->group(function () {
-    Route::apiResource('projects', ProjectController::class);
-    Route::patch(
-    'units/{unit}/reserve',
-    [UnitController::class, 'markReserved']
-);
+    Route::middleware('tenant:marq')->group(function () {
+        Route::apiResource('projects', ProjectController::class);
 
-Route::patch(
-    'units/{unit}/sell',
-    [UnitController::class, 'markSold']
-          );
-    Route::apiResource('units', UnitController::class);
+        Route::patch('/units/{unit}/reserve', [
+            UnitController::class,
+            'markReserved',
+        ]);
 
-});
+        Route::patch('/units/{unit}/sell', [
+            UnitController::class,
+            'markSold',
+        ]);
 
+        Route::apiResource('units', UnitController::class);
+    });
 });

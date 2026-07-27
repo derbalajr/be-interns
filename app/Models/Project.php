@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -57,8 +58,9 @@ class Project extends Model
 
         return $slug;
     }
+
     public function units(): HasMany
-{
-    return $this->hasMany(Unit::class);
-}
+    {
+        return $this->hasMany(Unit::class);
+    }
 }

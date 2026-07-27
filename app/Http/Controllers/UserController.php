@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\UpdateUserRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
     public function index(Request $request): UserCollection
     {
-         Gate::authorize('view-users');
+        Gate::authorize('view-users');
+
         $perPage = min(
             max($request->integer('per_page', 15), 1),
             100,
@@ -31,69 +32,71 @@ class UserController extends Controller
     }
 
     public function store(StoreUserRequest $request)
-{
-    $validated = $request->validated();
+    {
+        $validated = $request->validated();
 
-    $user = DB::transaction(function () use ($validated) {
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-            'active' => true,
-        ]);
+        $user = DB::transaction(function () use ($validated) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+                'active' => true,
+            ]);
 
-        $user->assignRole($validated['role']);
+            $user->assignRole($validated['role']);
 
-        return $user;
-    });
+            return $user;
+        });
 
-    $user->load('roles');
+        $user->load('roles');
 
-    return (new UserResource($user))
-        ->response()
-        ->setStatusCode(201);
-}
-public function update(
-    UpdateUserRequest $request,
-    User $user
-): UserResource {
-    $validated = $request->validated();
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(201);
+    }
 
-    DB::transaction(function () use ($validated, $user) {
-        $userFields = [];
+    public function update(
+        UpdateUserRequest $request,
+        User $user
+    ): UserResource {
+        $validated = $request->validated();
 
-        foreach (['name', 'email', 'password', 'active'] as $field) {
-            if (array_key_exists($field, $validated)) {
-                $userFields[$field] = $validated[$field];
+        DB::transaction(function () use ($validated, $user) {
+            $userFields = [];
+
+            foreach (['name', 'email', 'password', 'active'] as $field) {
+                if (array_key_exists($field, $validated)) {
+                    $userFields[$field] = $validated[$field];
+                }
             }
-        }
 
-        if ($userFields !== []) {
-            $user->update($userFields);
-        }
+            if ($userFields !== []) {
+                $user->update($userFields);
+            }
 
-        if (array_key_exists('role', $validated)) {
-            $user->syncRoles([$validated['role']]);
-        }
+            if (array_key_exists('role', $validated)) {
+                $user->syncRoles([$validated['role']]);
+            }
 
-        if (
-            array_key_exists('active', $validated)
-            && $validated['active'] === false
-        ) {
-            $user->tokens()->delete();
-        }
-    });
+            if (
+                array_key_exists('active', $validated)
+                && $validated['active'] === false
+            ) {
+                $user->tokens()->delete();
+            }
+        });
 
-    return new UserResource(
-        $user->fresh()->load('roles')
-    );
-}
-public function destroy(User $user): Response
-{
-    Gate::authorize('delete-users');
+        return new UserResource(
+            $user->fresh()->load('roles')
+        );
+    }
 
-    $user->delete();
+    public function destroy(User $user): Response
+    {
+        Gate::authorize('delete-users');
 
-    return response()->noContent();
-}
+        $user->delete();
+
+        return response()->noContent();
+    }
 }

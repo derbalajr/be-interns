@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\LeadStage;
 use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -29,14 +30,7 @@ class LeadFactory extends Factory
                 'phone_call',
                 'walk_in',
             ]),
-            'stage' => fake()->randomElement([
-                'new',
-                'contacted',
-                'qualified',
-                'negotiation',
-                'won',
-                'lost',
-            ]),
+            'stage' => fake()->randomElement(LeadStage::cases()),
             'budget' => fake()->randomFloat(2, 100000, 5000000),
             'agent_id' => User::factory(),
         ];
@@ -45,7 +39,7 @@ class LeadFactory extends Factory
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => [
-            'stage' => 'lost',
+            'stage' => LeadStage::Unqualified,
         ]);
     }
 }

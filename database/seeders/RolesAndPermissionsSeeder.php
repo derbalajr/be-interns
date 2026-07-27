@@ -84,12 +84,12 @@ class RolesAndPermissionsSeeder extends Seeder
         // 2. Define Admin Role & Assign Permissions
         // firstOrCreate prevents duplicate role errors
         $agentRole = Role::firstOrCreate(['name' => 'agent']);
-        $agentRole->syncPermissions(['view-users', 'view-projects',  'view-units',]); // Agents can view users and projects
+        $agentRole->syncPermissions(['view-users', 'view-projects',  'view-units']); // Agents can view users and projects
         $managerRole = Role::firstOrCreate(['name' => 'manager']);
-        $managerRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'view-roles', 'view-permissions', 'edit-roles', 'delete-roles', 'create-projects', 'update-projects', 'delete-projects', 'view-projects','view-units',
-'create-units',
-'edit-units',
-'delete-units',]); // Managers have broader permissions
+        $managerRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'view-roles', 'view-permissions', 'edit-roles', 'delete-roles', 'create-projects', 'update-projects', 'delete-projects', 'view-projects', 'view-units',
+            'create-units',
+            'edit-units',
+            'delete-units', ]); // Managers have broader permissions
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $adminRole->syncPermissions(['view-users', 'create-users', 'edit-users', 'delete-users', 'view-roles', 'view-permissions', 'view-projects']); // Admins have full permissions
