@@ -6,7 +6,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UnitController;
 // Health check
 Route::get('/health', function () {
     return response()->json([
@@ -27,6 +27,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    
     // Roles & Permissions CRUD
     Route::apiResource('roles', RoleController::class);
     Route::get('/permissions', [PermissionController::class, 'index']);
@@ -39,6 +40,7 @@ Route::middleware('auth:api')->group(function () {
     // Tenant: MARQ
     Route::middleware('tenant:marq')->group(function () {
         Route::apiResource('projects', ProjectController::class);
+        Route::apiResource('units', UnitController::class);
     });
 
 });
