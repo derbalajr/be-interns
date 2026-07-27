@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AssignLeadRequest;
+use App\Http\Requests\IndexLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Http\Resources\LeadCollection;
 use App\Http\Resources\LeadResource;
 use App\Models\Lead;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
-    public function index(Request $request): LeadCollection
+    public function index(IndexLeadRequest $request): LeadCollection
     {
         $this->authorize('viewAny', Lead::class);
 
@@ -22,14 +22,27 @@ class LeadController extends Controller
             100,
         );
 
-        $query = Lead::query()->with('agent');
+        $query = Lead::query()
+            ->with('agent')
+            ->stage($request->query('stage'))
+            ->source($request->query('source'))
+            ->budgetRange(
+                $request->query('min_budget'),
+                $request->query('max_budget'),
+            )
+            ->search($request->query('q'));
 
         if ($request->user()->isAgent()) {
             $query->where('agent_id', $request->user()->id);
         }
 
+        $sort = $request->query('sort', '-created_at');
+
+        $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
+        $column = ltrim($sort, '-');
+
         $leads = $query
-            ->latest()
+            ->orderBy($column, $direction)
             ->paginate($perPage);
 
         return new LeadCollection($leads);
