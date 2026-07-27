@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
                 'email' => 'salma.waled@addressinv.com',
                 'role' => 'super-admin',
                 'tenant' => 'tai',
-            ],  
+            ],
             [
                 'name' => 'Gamila',
                 'email' => 'gamila.mamdouh@addressinv.com',
@@ -95,7 +95,7 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $data) {
-            $user = User::firstOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $data['email']],
                 [
                     'name' => $data['name'],
