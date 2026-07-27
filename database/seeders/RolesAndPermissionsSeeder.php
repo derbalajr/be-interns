@@ -67,6 +67,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view-users',
             'create-users',
             'edit-users',
+            'delete-users',
             'view-roles',
             'view-permissions',
             'edit-roles',
