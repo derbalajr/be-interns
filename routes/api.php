@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
@@ -36,9 +36,26 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('leads', LeadController::class);
         Route::patch('/leads/{lead}/assign', [LeadController::class, 'assign']);    });
 
-    // Tenant: MARQ
-    Route::middleware('tenant:marq')->group(function () {
-        Route::apiResource('projects', ProjectController::class);
-    });
+    Route::apiResource('leads', LeadController::class);
+
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::put('/roles/{role}', [RoleController::class, 'update']);
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
+
+    Route::get('/permissions', [PermissionController::class, 'index']);
+    Route::apiResource('projects', ProjectController::class);
 
 });
+
+Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+});
+
+// Tenant: MARQ
+Route::middleware('tenant:marq')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
+});
+
