@@ -16,7 +16,9 @@ class LeadSeeder extends Seeder
             'name' => 'Ahmed Ali',
             'email' => 'ahmed@example.com',
             'phone' => '01012345678',
-            'status' => 'new',
+            'source' => 'website',
+            'stage' => 'new',
+            'budget' => 500000,
             'agent_id' => null,
         ]);
 
@@ -24,7 +26,9 @@ class LeadSeeder extends Seeder
             'name' => 'Sara Mohamed',
             'email' => 'sara@example.com',
             'phone' => '01087654321',
-            'status' => 'contacted',
+            'source' => 'referral',
+            'stage' => 'contacted',
+            'budget' => 750000,
             'agent_id' => null,
         ]);
 
@@ -32,7 +36,9 @@ class LeadSeeder extends Seeder
             'name' => 'Omar Hassan',
             'email' => 'omar@example.com',
             'phone' => '01111111111',
-            'status' => 'qualified',
+            'source' => 'social_media',
+            'stage' => 'qualified',
+            'budget' => 1000000,
             'agent_id' => null,
         ]);
     }

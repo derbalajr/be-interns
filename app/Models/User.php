@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Scopes\TenantScope;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -12,7 +13,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use App\Models\Scopes\TenantScope;
 
 #[Fillable(['name', 'email', 'password', 'active', 'tenant'])]
 #[Hidden(['password', 'remember_token'])]
@@ -33,9 +33,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'active' => 'boolean'
-            ,
-            ];
+            'active' => 'boolean',
+        ];
     }
 
     public function isAdmin(): bool
@@ -58,4 +57,8 @@ class User extends Authenticatable
         return $this->hasMany(Lead::class, 'agent_id');
     }
 
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class, 'agent_id');
+    }
 }
