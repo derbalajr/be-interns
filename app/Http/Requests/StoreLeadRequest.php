@@ -47,18 +47,6 @@ class StoreLeadRequest extends FormRequest
                 ]),
             ],
 
-            'stage' => [
-                'required',
-                Rule::in([
-                    'new',
-                    'contacted',
-                    'qualified',
-                    'negotiation',
-                    'won',
-                    'lost',
-                ]),
-            ],
-
             'budget' => [
                 'nullable',
                 'numeric',

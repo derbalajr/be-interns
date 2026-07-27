@@ -16,14 +16,14 @@ class TenantScope implements Scope
             return;
         }
 
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
         $user = Auth::user();
 
         if ($user && isset($user->tenant)) {
-            $builder->where($model->getTable() . '.tenant', $user->tenant);
+            $builder->where($model->getTable().'.tenant', $user->tenant);
         }
     }
 }

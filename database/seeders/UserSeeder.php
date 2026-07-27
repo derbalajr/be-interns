@@ -12,8 +12,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create Admin
-       $password = 'password123';
+        $password = 'password123';
 
         $users = [
             [
@@ -64,22 +63,18 @@ class UserSeeder extends Seeder
                 'role' => 'super-admin',
                 'tenant' => 'tai',
             ],
-
-            // Test Manager
             [
                 'name' => 'Manager M',
                 'email' => 'manager@marq.com',
                 'role' => 'manager',
                 'tenant' => 'marq',
             ],
-[
+            [
                 'name' => 'Manager T',
                 'email' => 'manager@tai.com',
                 'role' => 'manager',
                 'tenant' => 'tai',
             ],
-
-            // Test Agent
             [
                 'name' => 'Agent M',
                 'email' => 'agent@marq.com',
@@ -96,7 +91,9 @@ class UserSeeder extends Seeder
 
         foreach ($users as $data) {
             $user = User::updateOrCreate(
-                ['email' => $data['email']],
+                [
+                    'email' => $data['email'],
+                ],
                 [
                     'name' => $data['name'],
                     'password' => $password,
@@ -104,9 +101,7 @@ class UserSeeder extends Seeder
                 ]
             );
 
-            $user->forceFill(['tenant' => $data['tenant']]);
-            $user->save();
-
             $user->syncRoles([$data['role']]);
-        }}
+        }
+    }
 }

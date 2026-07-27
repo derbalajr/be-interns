@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\LeadStage;
 use App\Http\Requests\AssignLeadRequest;
+use App\Http\Requests\ChangeLeadStageRequest;
 use App\Http\Requests\IndexLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
@@ -10,6 +12,7 @@ use App\Http\Resources\LeadCollection;
 use App\Http\Resources\LeadResource;
 use App\Models\Lead;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class LeadController extends Controller
 {
@@ -48,13 +51,20 @@ class LeadController extends Controller
         return new LeadCollection($leads);
     }
 
-    public function store(StoreLeadRequest $request): LeadResource
+    public function store(StoreLeadRequest $request)
     {
         $lead = Lead::create($request->validated());
 
-        $lead->load('agent');
+        $lead->refresh();
 
-        return new LeadResource($lead);
+        return (new LeadResource($lead))
+            ->additional([
+                'meta' => [
+                    'success' => true,
+                ],
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show(Lead $lead): LeadResource
@@ -103,5 +113,29 @@ class LeadController extends Controller
         return response()->json([
             'message' => 'Lead deleted successfully.',
         ]);
+    }
+
+    public function changeStage(
+        ChangeLeadStageRequest $request,
+        Lead $lead,
+    ): LeadResource {
+        $this->authorize('update', $lead);
+
+        $targetStage = LeadStage::from(
+            $request->validated('stage'),
+        );
+
+        if (! $lead->canTransitionTo($targetStage)) {
+            throw ValidationException::withMessages([
+                'stage' => [
+                    "A lead cannot move from {$lead->stage->value} to {$targetStage->value}.",
+                ],
+            ]);
+        }
+
+        $lead->transitionTo($targetStage);
+        $lead->load('agent');
+
+        return new LeadResource($lead);
     }
 }

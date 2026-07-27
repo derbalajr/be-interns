@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeadStage;
 use Database\Factories\LeadFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,6 +34,7 @@ class Lead extends Model
     {
         return [
             'budget' => 'decimal:2',
+            'stage' => LeadStage::class,
         ];
     }
 
@@ -83,5 +85,17 @@ class Lead extends Model
                     ->orWhere('phone', 'like', "%{$search}%");
             });
         });
+    }
+
+    public function canTransitionTo(LeadStage $stage): bool
+    {
+        return $this->stage->canTransitionTo($stage);
+    }
+
+    public function transitionTo(LeadStage $stage): void
+    {
+        $this->update([
+            'stage' => $stage,
+        ]);
     }
 }

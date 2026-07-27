@@ -51,19 +51,6 @@ class UpdateLeadRequest extends FormRequest
                 ]),
             ],
 
-            'stage' => [
-                'sometimes',
-                'required',
-                Rule::in([
-                    'new',
-                    'contacted',
-                    'qualified',
-                    'negotiation',
-                    'won',
-                    'lost',
-                ]),
-            ],
-
             'budget' => [
                 'sometimes',
                 'nullable',

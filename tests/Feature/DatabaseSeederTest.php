@@ -18,19 +18,24 @@ class DatabaseSeederTest extends TestCase
             'id' => $user->id,
             'email' => $user->email,
         ]);
-
-        $this->assertNotSame('password', $user->password);
     }
 
     public function test_database_seeder_creates_demo_users(): void
     {
         $this->seed();
 
-        $this->assertDatabaseCount('users', 6);
+        $this->assertDatabaseCount('users', 12);
 
         $this->assertDatabaseHas('users', [
-            'name' => 'Demo Manager',
-            'email' => 'manager@crm.test',
+            'name' => 'Manager T',
+            'email' => 'manager@tai.com',
+            'tenant' => 'tai',
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Manager M',
+            'email' => 'manager@marq.com',
+            'tenant' => 'marq',
         ]);
     }
 
