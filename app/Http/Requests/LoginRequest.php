@@ -29,6 +29,27 @@ class LoginRequest extends FormRequest
                 'required',
                 'string',
             ],
+
+            'workspace' => [
+                'nullable',
+                'string',
+                'in:the-address,marq',
+            ],
+        ];
+    }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'email' => [
+                'description' => 'The user\'s email address.',
+                'example' => 'salma@example.com',
+            ],
+
+            'password' => [
+                'description' => 'The user\'s password.',
+                'example' => 'password123',
+            ],
         ];
     }
 }

@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('projects', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->string('slug')->unique(); // Slugs should be unique for routing
-        $table->string('location')->nullable();
-        $table->text('description')->nullable();
-        $table->timestamps();
-    });
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique(); // Slugs should be unique for routing
+            $table->string('location')->nullable();
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
 
     }
 

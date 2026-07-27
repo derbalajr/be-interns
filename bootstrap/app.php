@@ -8,7 +8,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-
+use App\Http\Middleware\EnsureTenantAccess;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        'tenant' => EnsureTenantAccess::class,
     ]);
 })
     ->withExceptions(function (Exceptions $exceptions): void {

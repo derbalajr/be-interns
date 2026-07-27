@@ -12,14 +12,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Scopes\TenantScope;
 
-#[Fillable(['name', 'email', 'password', 'active'])]
+#[Fillable(['name', 'email', 'password', 'active', 'tenant'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
+
     protected string $guard_name = 'api';
+
     /**
      * Get the attributes that should be cast.
      *
@@ -34,6 +37,7 @@ class User extends Authenticatable
             ,
             ];
     }
+
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
