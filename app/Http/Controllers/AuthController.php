@@ -38,14 +38,40 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Validate workspace matches user's tenant
+        $workspace = $request->workspace;
+        if ($workspace) {
+            $expectedTenant = $workspace === 'the-address' ? 'tai' : 'marq';
+            if ($user->tenant !== $expectedTenant) {
+                return response()->json([
+                    'message' => 'This user does not belong to the selected workspace.',
+                ], 403);
+            }
+        }
+
         /** @var User $user */
         $token = $user->createToken('api')->plainTextToken;
 
+    if (! $user || ! Hash::check($request->password, $user->password)) {
         return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ]);
+            'message' => 'Invalid credentials.',
+        ], 401);
+    
+
     }
+    if (! $user->active) {
+    return response()->json([
+        'message' => 'Your account has been deactivated. Please contact a manager.',
+    ], 403);
+}
+
+    $token = $user->createToken('api')->plainTextToken;
+
+    return response()->json([
+        'user' => new UserResource($user),
+        'token' => $token,
+    ]);
+}
 
     /**
      * Logout

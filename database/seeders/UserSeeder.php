@@ -100,8 +100,12 @@ class UserSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'password' => $password,
+                    'tenant' => $data['tenant'],
                 ]
             );
+
+            $user->forceFill(['tenant' => $data['tenant']]);
+            $user->save();
 
             $user->syncRoles([$data['role']]);
         }}
