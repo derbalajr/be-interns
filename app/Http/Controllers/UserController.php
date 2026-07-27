@@ -9,11 +9,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
     public function index(Request $request): UserCollection
     {
+         Gate::authorize('view-users');
         $perPage = min(
             max($request->integer('per_page', 15), 1),
             100,
@@ -84,5 +87,13 @@ public function update(
     return new UserResource(
         $user->fresh()->load('roles')
     );
+}
+public function destroy(User $user): Response
+{
+    Gate::authorize('delete-users');
+
+    $user->delete();
+
+    return response()->noContent();
 }
 }
