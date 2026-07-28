@@ -50,6 +50,20 @@ Route::middleware('auth:api')->group(function () {
             LeadController::class,
             'changeStage',
         ]);
+        Route::get('/leads/{lead}/shortlist', [
+            LeadController::class,
+            'shortlist',
+        ]);
+
+        Route::post('/leads/{lead}/shortlist/{unit}', [
+            LeadController::class,
+            'addToShortlist',
+        ]);
+
+        Route::delete('/leads/{lead}/shortlist/{unit}', [
+            LeadController::class,
+            'removeFromShortlist',
+        ]);
 
         Route::apiResource('leads', LeadController::class);
         Route::apiResource('deals', DealController::class);
