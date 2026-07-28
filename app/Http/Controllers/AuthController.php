@@ -49,15 +49,6 @@ class AuthController extends Controller
             }
         }
 
-        /** @var User $user */
-        $token = $user->createToken('api')->plainTextToken;
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'Invalid credentials.',
-            ], 401);
-
-        }
         if (! $user->active) {
             return response()->json([
                 'message' => 'Your account has been deactivated. Please contact a manager.',
