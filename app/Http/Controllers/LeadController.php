@@ -15,6 +15,7 @@ use App\Models\Lead;
 use App\Models\Unit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
 class LeadController extends Controller
@@ -145,6 +146,7 @@ class LeadController extends Controller
     public function shortlist(Lead $lead): AnonymousResourceCollection
     {
         $this->authorize('view', $lead);
+        Gate::authorize('view-units');
 
         $units = $lead->units()
             ->with('project')
@@ -159,6 +161,7 @@ class LeadController extends Controller
         Unit $unit,
     ): UnitResource {
         $this->authorize('update', $lead);
+        Gate::authorize('view-units');
 
         $lead->units()->syncWithoutDetaching([
             $unit->id,
