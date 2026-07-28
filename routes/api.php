@@ -114,7 +114,7 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('projects', ProjectController::class);
 
         Route::post('/units', [UnitController::class, 'store']);
-        Route::put('/units/{unit}', [UnitController::class, 'update']);
+        Route::match(['put', 'patch'], '/units/{unit}', [UnitController::class, 'update']);
         Route::delete('/units/{unit}', [UnitController::class, 'destroy']);
 
         Route::patch('/units/{unit}/reserve', [
