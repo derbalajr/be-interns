@@ -10,8 +10,11 @@ use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Http\Resources\LeadCollection;
 use App\Http\Resources\LeadResource;
+use App\Http\Resources\UnitResource;
 use App\Models\Lead;
+use App\Models\Unit;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Validation\ValidationException;
 
 class LeadController extends Controller
@@ -137,5 +140,45 @@ class LeadController extends Controller
         $lead->load('agent');
 
         return new LeadResource($lead);
+    }
+
+    public function shortlist(Lead $lead): AnonymousResourceCollection
+    {
+        $this->authorize('view', $lead);
+
+        $units = $lead->units()
+            ->with('project')
+            ->latest('lead_unit.created_at')
+            ->get();
+
+        return UnitResource::collection($units);
+    }
+
+    public function addToShortlist(
+        Lead $lead,
+        Unit $unit,
+    ): UnitResource {
+        $this->authorize('update', $lead);
+
+        $lead->units()->syncWithoutDetaching([
+            $unit->id,
+        ]);
+
+        $unit->load('project');
+
+        return new UnitResource($unit);
+    }
+
+    public function removeFromShortlist(
+        Lead $lead,
+        Unit $unit,
+    ): JsonResponse {
+        $this->authorize('update', $lead);
+
+        $lead->units()->detach($unit->id);
+
+        return response()->json([
+            'message' => 'Unit removed from lead shortlist successfully.',
+        ]);
     }
 }
