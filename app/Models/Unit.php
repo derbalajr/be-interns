@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
     'type',
     'area',
     'price',
+    'status',
     'project_id',
 ])]
 class Unit extends Model
