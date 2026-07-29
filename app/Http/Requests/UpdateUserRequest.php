@@ -40,11 +40,17 @@ class UpdateUserRequest extends FormRequest
                 'confirmed',
             ],
 
-            'role' => [
+            'role_id' => [
                 'sometimes',
                 'required',
-                Rule::in(['manager', 'agent']),
-            ],
+                 'integer',
+                  Rule::exists('roles', 'id')
+                  ->where(function ($query) {
+                 $query
+                ->where('guard_name', 'api')
+                ->whereIn('name', ['manager', 'agent']);
+         }),
+         ],
 
             'active' => [
                 'sometimes',

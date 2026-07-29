@@ -35,11 +35,16 @@ class StoreUserRequest extends FormRequest
                 'confirmed',
             ],
 
-            'role' => [
-                'required',
-                'string',
-                Rule::in(['manager', 'agent']),
-            ],
+            'role_id' => [
+            'required',
+             'integer',
+             Rule::exists('roles', 'id')
+                ->where(function ($query) {
+                   $query
+                ->where('guard_name', 'api')
+                ->whereIn('name', ['manager', 'agent']);
+        }),
+],
         ];
     }
 }
