@@ -45,11 +45,7 @@ class UpdateUserRequest extends FormRequest
                 'required',
                  'integer',
                   Rule::exists('roles', 'id')
-                  ->where(function ($query) {
-                 $query
-                ->where('guard_name', 'api')
-                ->whereIn('name', ['manager', 'agent']);
-         }),
+                  
          ],
 
             'active' => [
