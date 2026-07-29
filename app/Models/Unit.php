@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable([
     'code',
     'type',
     'area',
     'price',
+    'status',
     'project_id',
 ])]
 class Unit extends Model
@@ -37,5 +39,11 @@ class Unit extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function leads(): BelongsToMany
+    {
+        return $this->belongsToMany(Lead::class)
+            ->withTimestamps();
     }
 }

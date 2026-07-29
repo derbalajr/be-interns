@@ -25,21 +25,55 @@ Route::post('/login', [AuthController::class, 'login'])
 
 // Protected API routes
 Route::middleware('auth:api')->group(function () {
-    // Auth management
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication
+    |--------------------------------------------------------------------------
+    */
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    // User management
+    /*
+    |--------------------------------------------------------------------------
+    | User management
+    |--------------------------------------------------------------------------
+    */
+
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-    // Roles and permissions
+    /*
+    |--------------------------------------------------------------------------
+    | Roles and permissions
+    |--------------------------------------------------------------------------
+    */
+
     Route::apiResource('roles', RoleController::class);
     Route::get('/permissions', [PermissionController::class, 'index']);
 
-    // Tenant: TAI
+    /*
+    |--------------------------------------------------------------------------
+    | Shared inventory routes
+    |--------------------------------------------------------------------------
+    |
+    | These routes must be accessible to authenticated users who have the
+    | view-units permission. TAI users need them to browse inventory before
+    | adding a unit to a lead shortlist.
+    |
+    */
+
+    Route::get('/units', [UnitController::class, 'index']);
+    Route::get('/units/{unit}', [UnitController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tenant: TAI
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('tenant:tai')->group(function () {
         Route::patch('/leads/{lead}/assign', [
             LeadController::class,
@@ -51,13 +85,37 @@ Route::middleware('auth:api')->group(function () {
             'changeStage',
         ]);
 
+        Route::get('/leads/{lead}/shortlist', [
+            LeadController::class,
+            'shortlist',
+        ]);
+
+        Route::post('/leads/{lead}/shortlist/{unit}', [
+            LeadController::class,
+            'addToShortlist',
+        ]);
+
+        Route::delete('/leads/{lead}/shortlist/{unit}', [
+            LeadController::class,
+            'removeFromShortlist',
+        ]);
+
         Route::apiResource('leads', LeadController::class);
         Route::apiResource('deals', DealController::class);
     });
 
-    // Tenant: MARQ
+    /*
+    |--------------------------------------------------------------------------
+    | Tenant: MARQ
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('tenant:marq')->group(function () {
         Route::apiResource('projects', ProjectController::class);
+
+        Route::post('/units', [UnitController::class, 'store']);
+        Route::match(['put', 'patch'], '/units/{unit}', [UnitController::class, 'update']);
+        Route::delete('/units/{unit}', [UnitController::class, 'destroy']);
 
         Route::patch('/units/{unit}/reserve', [
             UnitController::class,
@@ -68,7 +126,5 @@ Route::middleware('auth:api')->group(function () {
             UnitController::class,
             'markSold',
         ]);
-
-        Route::apiResource('units', UnitController::class);
     });
 });
