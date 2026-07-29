@@ -40,11 +40,13 @@ class UpdateUserRequest extends FormRequest
                 'confirmed',
             ],
 
-            'role' => [
+            'role_id' => [
                 'sometimes',
                 'required',
-                Rule::in(['manager', 'agent']),
-            ],
+                 'integer',
+                  Rule::exists('roles', 'id')
+                  
+         ],
 
             'active' => [
                 'sometimes',

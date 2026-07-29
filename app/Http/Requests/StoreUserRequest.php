@@ -35,11 +35,13 @@ class StoreUserRequest extends FormRequest
                 'confirmed',
             ],
 
-            'role' => [
-                'required',
-                'string',
-                Rule::in(['manager', 'agent']),
-            ],
+            'role_id' => [
+            'required',
+             'integer',
+             Rule::exists('roles', 'id')
+                
+        
+],
         ];
     }
 }

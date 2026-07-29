@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -31,65 +32,75 @@ class UserController extends Controller
         return new UserCollection($users);
     }
 
-    public function store(StoreUserRequest $request)
-    {
-        $validated = $request->validated();
+   public function store(StoreUserRequest $request)
+{
+    $validated = $request->validated();
 
-        $user = DB::transaction(function () use ($validated) {
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => $validated['password'],
-                'active' => true,
-            ]);
+    $user = DB::transaction(function () use ($validated) {
+        $role = Role::query()
+            ->where('guard_name', 'api')
+            ->findOrFail($validated['role_id']);
 
-            $user->assignRole($validated['role']);
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'active' => true,
+        ]);
 
-            return $user;
-        });
+        $user->assignRole($role);
 
-        $user->load('roles');
+        return $user;
+    });
 
-        return (new UserResource($user))
-            ->response()
-            ->setStatusCode(201);
-    }
+    $user->load('roles');
 
-    public function update(
-        UpdateUserRequest $request,
-        User $user
-    ): UserResource {
-        $validated = $request->validated();
+    return (new UserResource($user))
+        ->response()
+        ->setStatusCode(201);
+}
 
-        DB::transaction(function () use ($validated, $user) {
-            $userFields = [];
+   public function update(
+    UpdateUserRequest $request,
+    User $user
+): UserResource {
+    $validated = $request->validated();
 
-            foreach (['name', 'email', 'password', 'active'] as $field) {
-                if (array_key_exists($field, $validated)) {
-                    $userFields[$field] = $validated[$field];
-                }
+    DB::transaction(function () use ($validated, $user) {
+        $userFields = [];
+
+        foreach (
+            ['name', 'email', 'password', 'active'] as $field
+        ) {
+            if (array_key_exists($field, $validated)) {
+                $userFields[$field] = $validated[$field];
             }
+        }
 
-            if ($userFields !== []) {
-                $user->update($userFields);
-            }
+        if ($userFields !== []) {
+            $user->update($userFields);
+        }
 
-            if (array_key_exists('role', $validated)) {
-                $user->syncRoles([$validated['role']]);
-            }
+        if (array_key_exists('role_id', $validated)) {
+            $role = Role::query()
+                ->where('guard_name', 'api')
+                ->findOrFail($validated['role_id']);
 
-            if (
-                array_key_exists('active', $validated)
-                && $validated['active'] === false
-            ) {
-                $user->tokens()->delete();
-            }
-        });
+            $user->syncRoles([$role]);
+        }
 
-        return new UserResource(
-            $user->fresh()->load('roles')
-        );
-    }
+        if (
+            array_key_exists('active', $validated)
+            && $validated['active'] === false
+        ) {
+            $user->tokens()->delete();
+        }
+    });
+
+    return new UserResource(
+        $user->fresh()->load('roles')
+    );
+}
 
     public function destroy(User $user): Response
     {
