@@ -16,6 +16,11 @@ class UserResource extends BaseResource
             'email' => $this->email,
             'tenant' => $this->tenant,
 
+            // Account state. `active` is the source of truth; `status` is a
+            // display-friendly mirror the frontend renders directly.
+            'active' => (bool) $this->active,
+            'status' => $this->active ? 'Active' : 'Inactive',
+
             // Array of role NAMES — used by the assign-agent select, which
             // filters on user.roles (e.g. role === 'agent').
             'roles' => $this->getRoleNames(),
