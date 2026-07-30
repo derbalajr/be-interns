@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FilterUnitRequest;
 use App\Http\Requests\StoreUnitRequest;
 use App\Http\Requests\UpdateUnitRequest;
 use App\Http\Resources\UnitResource;
@@ -15,17 +16,80 @@ class UnitController extends Controller
     /**
      * Display a paginated list of units.
      */
-    public function index(): AnonymousResourceCollection
-    {
-        Gate::authorize('view-units');
+    public function index(
+    FilterUnitRequest $request
+): AnonymousResourceCollection {
+    Gate::authorize('view-units');
 
-        $units = Unit::query()
-            ->with('project')
-            ->latest()
-            ->paginate();
+    $validated = $request->validated();
 
-        return UnitResource::collection($units);
+    $query = Unit::query()
+        ->with('project');
+
+    // Validated inside FilterUnitRequest
+    if (isset($validated['min_price'])) {
+        $query->where(
+            'price',
+            '>=',
+            $validated['min_price']
+        );
     }
+
+    // Validated inside FilterUnitRequest
+    if (isset($validated['max_price'])) {
+        $query->where(
+            'price',
+            '<=',
+            $validated['max_price']
+        );
+    }
+
+    // Normal if condition — no validation
+    if ($request->filled('type')) {
+        $query->where(
+            'type',
+            $request->input('type')
+        );
+    }
+
+    // Normal if condition — no validation
+    if ($request->filled('status')) {
+        $query->where(
+            'status',
+            $request->input('status')
+        );
+    }
+
+    // Normal if condition — no validation
+    if ($request->filled('location')) {
+        $location = $request->input('location');
+
+        $query->whereHas(
+            'project',
+            function ($projectQuery) use ($location) {
+                $projectQuery->where(
+                    'location',
+                    'like',
+                    '%' . $location . '%'
+                );
+            }
+        );
+    }
+
+    if ($request->input('sort') === 'price_asc') {
+        $query->orderBy('price', 'asc');
+    } elseif ($request->input('sort') === 'price_desc') {
+        $query->orderBy('price', 'desc');
+    } elseif ($request->input('sort') === 'oldest') {
+        $query->oldest();
+    } else {
+        $query->latest();
+    }
+
+$units = $query->paginate();
+
+    return UnitResource::collection($units);
+}
 
     /**
      * Store a newly created unit.
@@ -33,8 +97,9 @@ class UnitController extends Controller
     public function store(StoreUnitRequest $request): UnitResource
     {
         $unit = Unit::create($request->validated());
+
         $unit->load('project');
-        $unit->refresh(); // Refresh the model to get the latest data from the database
+        $unit->refresh();
 
         return new UnitResource($unit);
     }
