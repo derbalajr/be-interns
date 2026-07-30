@@ -36,7 +36,10 @@ class UserController extends Controller
 {
     $validated = $request->validated();
 
-    $user = DB::transaction(function () use ($validated) {
+    // New users belong to the same tenant/workspace as their creator.
+    $tenant = $request->user()?->tenant;
+
+    $user = DB::transaction(function () use ($validated, $tenant) {
         $role = Role::query()
             ->where('guard_name', 'api')
             ->findOrFail($validated['role_id']);
@@ -45,7 +48,8 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],
-            'active' => true,
+            'active' => $validated['active'] ?? true,
+            'tenant' => $tenant,
         ]);
 
         $user->assignRole($role);
