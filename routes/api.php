@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
@@ -126,5 +128,15 @@ Route::middleware('auth:api')->group(function () {
             UnitController::class,
             'markSold',
         ]);
+
+        // Reservations
+        Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::post('/reservations', [ReservationController::class, 'store']);
+        Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
+        Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel']);
+
+        // Clients
+        Route::apiResource('clients', ClientController::class);
+        Route::post('/clients/process-national-id', [ClientController::class, 'processNationalId']);
     });
 });
