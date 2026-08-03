@@ -41,6 +41,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'create-clients',
             'edit-clients',
             'delete-clients',
+
+            'view-handovers',
+            'create-handovers',
+            'complete-handovers',
         ];
 
         foreach ($permissions as $permission) {
@@ -92,6 +96,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'create-clients',
             'edit-clients',
             'delete-clients',
+            'view-handovers',
+            'create-handovers',
+            'complete-handovers',
         ]);
 
         $adminRole->syncPermissions([

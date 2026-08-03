@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\HandoverController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
@@ -138,5 +139,11 @@ Route::middleware('auth:api')->group(function () {
         // Clients
         Route::apiResource('clients', ClientController::class);
         Route::post('/clients/process-national-id', [ClientController::class, 'processNationalId']);
+
+        // Handovers
+        Route::get('/handovers', [HandoverController::class, 'index']);
+        Route::post('/handovers', [HandoverController::class, 'store']);
+        Route::get('/handovers/{handover}', [HandoverController::class, 'show']);
+        Route::post('/handovers/{handover}/complete', [HandoverController::class, 'complete']);
     });
 });
