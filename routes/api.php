@@ -145,5 +145,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/handovers', [HandoverController::class, 'store']);
         Route::get('/handovers/{handover}', [HandoverController::class, 'show']);
         Route::post('/handovers/{handover}/complete', [HandoverController::class, 'complete']);
+
+        //Sales
+        Route::get('/sales', [SaleController::class, 'index']);
+        Route::get('/sales/{sale}', [SaleController::class, 'show']);
     });
 });
