@@ -45,6 +45,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'view-handovers',
             'create-handovers',
             'complete-handovers',
+
+            'view-sales',
+            'create-sales',
         ];
 
         foreach ($permissions as $permission) {
@@ -99,6 +102,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'view-handovers',
             'create-handovers',
             'complete-handovers',
+            'view-sales',
+            'create-sales',
         ]);
 
         $adminRole->syncPermissions([
