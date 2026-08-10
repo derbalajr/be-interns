@@ -12,6 +12,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SaleController;
 
 // Health check
 Route::get('/health', function () {
@@ -120,10 +121,6 @@ Route::middleware('auth:api')->group(function () {
         Route::match(['put', 'patch'], '/units/{unit}', [UnitController::class, 'update']);
         Route::delete('/units/{unit}', [UnitController::class, 'destroy']);
 
-        Route::patch('/units/{unit}/reserve', [
-            UnitController::class,
-            'markReserved',
-        ]);
 
         Route::patch('/units/{unit}/sell', [
             UnitController::class,
@@ -145,5 +142,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/handovers', [HandoverController::class, 'store']);
         Route::get('/handovers/{handover}', [HandoverController::class, 'show']);
         Route::post('/handovers/{handover}/complete', [HandoverController::class, 'complete']);
+
+        //Sales
+        Route::get('/sales', [SaleController::class, 'index']);
+        Route::get('/sales/{sale}', [SaleController::class, 'show']);
     });
 });

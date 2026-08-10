@@ -52,4 +52,9 @@ class Unit extends Model
     {
         return $this->hasMany(Reservation::class);
     }
+
+    public function sale()
+   {
+    return $this->hasOne(Sale::class);
+   }
 }

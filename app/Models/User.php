@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Deal::class, 'agent_id');
     }
+
+    public function sales()
+   {
+    return $this->hasMany(Sale::class, 'agent_id');
+    }
 }
