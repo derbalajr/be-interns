@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHandoverRequest;
+use App\Http\Resources\HandoverResource;
 use App\Models\Handover;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class HandoverController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         if (!auth()->user() || !auth()->user()->can('view-handovers')) {
             abort(403, 'Unauthorized action.');
@@ -19,9 +20,9 @@ class HandoverController extends Controller
 
         $handovers = Handover::with(['unit', 'client'])
             ->latest()
-            ->get();
+            ->paginate();
 
-        return response()->json($handovers);
+        return HandoverResource::collection($handovers);
     }
 
     public function store(StoreHandoverRequest $request): JsonResponse
@@ -45,10 +46,14 @@ class HandoverController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
-        return response()->json($handover, 201);
+        $handover->load(['unit', 'client']);
+
+        return (new HandoverResource($handover))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function show(Handover $handover): JsonResponse
+    public function show(Handover $handover): HandoverResource
     {
         if (!auth()->user() || !auth()->user()->can('view-handovers')) {
             abort(403, 'Unauthorized action.');
@@ -56,7 +61,7 @@ class HandoverController extends Controller
 
         $handover->load(['unit', 'client']);
 
-        return response()->json($handover);
+        return new HandoverResource($handover);
     }
 
     public function complete(Handover $handover): JsonResponse

@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             LeadSeeder::class,
             ProjectSeeder::class,
             UnitSeeder::class,
+            ClientSeeder::class,
+            ReservationSeeder::class,
         ]);
     }
 }

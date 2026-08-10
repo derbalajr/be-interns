@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRequest;
+use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
@@ -43,34 +45,41 @@ class ReservationController extends Controller
                 'agent_id' => auth()->id(),
                 'status' => 'pending',
                 'reserved_price' => $unit->price,
-                'reserved_at' => date('Y-m-d H:i:s'),
+                'reserved_at' => now(),
             ]);
 
-            return response()->json($reservation, 201);
+            $reservation->load(['unit', 'client', 'agent']);
+
+            return (new ReservationResource($reservation))
+                ->response()
+                ->setStatusCode(201);
         });
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         if (!auth()->user() || !auth()->user()->can('view-reservations')) {
             abort(403, 'Unauthorized action.');
         }
 
-        $reservations = Reservation::where('agent_id', auth()->id())
-            ->with(['unit', 'client', 'agent'])
-            ->latest()
-            ->get();
+        $query = Reservation::with(['unit', 'client', 'agent'])->latest();
 
-        return response()->json($reservations);
+        // Agents only see their own reservations; managers/admins with the
+        // view-reservations permission see all of them.
+        if (auth()->user()->isAgent()) {
+            $query->where('agent_id', auth()->id());
+        }
+
+        return ReservationResource::collection($query->paginate());
     }
 
-    public function show(Reservation $reservation): JsonResponse
+    public function show(Reservation $reservation): ReservationResource
     {
         $this->authorizeReservation($reservation);
 
         $reservation->load(['unit', 'client', 'agent']);
 
-        return response()->json($reservation);
+        return new ReservationResource($reservation);
     }
 
     public function cancel(Reservation $reservation): JsonResponse
