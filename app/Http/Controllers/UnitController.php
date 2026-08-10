@@ -80,26 +80,9 @@ class UnitController extends Controller
         return response()->noContent();
     }
 
-    public function markReserved(Unit $unit): UnitResource
-    {
-        Gate::authorize('edit-units');
-
-        if ($unit->status !== Unit::STATUS_AVAILABLE) {
-            abort(422, 'Only an available unit can be reserved.');
-        }
-
-        $unit->status = Unit::STATUS_RESERVED;
-        $unit->save();
-
-        $unit->load('project');
-
-        return new UnitResource($unit);
-    }
-
-  
 
  public function markSold(Request $request, Unit $unit): UnitResource
-  {
+{
     Gate::authorize('edit-units');
 
     if ($unit->status !== Unit::STATUS_RESERVED) {
@@ -107,11 +90,12 @@ class UnitController extends Controller
     }
 
     $reservation = Reservation::where('unit_id', $unit->id)
+        ->whereIn('status', ['pending', 'confirmed'])
         ->latest()
         ->first();
 
     if (! $reservation) {
-        abort(422, 'No reservation found for this unit.');
+        abort(422, 'No active reservation found for this unit.');
     }
 
     DB::transaction(function () use ($unit, $reservation, $request) {
@@ -120,17 +104,17 @@ class UnitController extends Controller
         ]);
 
         Sale::create([
-            'unit_id'    => $unit->id,
-            'client_id'  => $reservation->client_id,
+            'unit_id' => $unit->id,
+            'client_id' => $reservation->client_id,
             'agent_id' => $request->user()->id,
-            'sale_price' => $unit->price,
-            'sold_at'    => now(),
-            'notes'      => null,
+            'sale_price' => $reservation->reserved_price,
+            'sold_at' => now(),
+            'notes' => null,
         ]);
     });
 
     $unit->load('project');
 
     return new UnitResource($unit);
-   }
+}
 }
