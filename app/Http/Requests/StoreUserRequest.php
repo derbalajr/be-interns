@@ -39,9 +39,14 @@ class StoreUserRequest extends FormRequest
             'required',
              'integer',
              Rule::exists('roles', 'id')
-                
-        
+
+
 ],
+
+            'active' => [
+                'sometimes',
+                'boolean',
+            ],
         ];
     }
 }
