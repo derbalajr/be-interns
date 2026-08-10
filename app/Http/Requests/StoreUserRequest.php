@@ -36,12 +36,11 @@ class StoreUserRequest extends FormRequest
             ],
 
             'role_id' => [
-            'required',
-             'integer',
-             Rule::exists('roles', 'id')
+                'required',
+                'integer',
+                Rule::exists('roles', 'id'),
 
-
-],
+            ],
 
             'active' => [
                 'sometimes',

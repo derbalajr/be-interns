@@ -32,79 +32,79 @@ class UserController extends Controller
         return new UserCollection($users);
     }
 
-   public function store(StoreUserRequest $request)
-{
-    $validated = $request->validated();
+    public function store(StoreUserRequest $request)
+    {
+        $validated = $request->validated();
 
-    // New users belong to the same tenant/workspace as their creator.
-    $tenant = $request->user()?->tenant;
+        // New users belong to the same tenant/workspace as their creator.
+        $tenant = $request->user()?->tenant;
 
-    $user = DB::transaction(function () use ($validated, $tenant) {
-        $role = Role::query()
-            ->where('guard_name', 'api')
-            ->findOrFail($validated['role_id']);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-            'active' => $validated['active'] ?? true,
-            'tenant' => $tenant,
-        ]);
-
-        $user->assignRole($role);
-
-        return $user;
-    });
-
-    $user->load('roles');
-
-    return (new UserResource($user))
-        ->response()
-        ->setStatusCode(201);
-}
-
-   public function update(
-    UpdateUserRequest $request,
-    User $user
-): UserResource {
-    $validated = $request->validated();
-
-    DB::transaction(function () use ($validated, $user) {
-        $userFields = [];
-
-        foreach (
-            ['name', 'email', 'password', 'active'] as $field
-        ) {
-            if (array_key_exists($field, $validated)) {
-                $userFields[$field] = $validated[$field];
-            }
-        }
-
-        if ($userFields !== []) {
-            $user->update($userFields);
-        }
-
-        if (array_key_exists('role_id', $validated)) {
+        $user = DB::transaction(function () use ($validated, $tenant) {
             $role = Role::query()
                 ->where('guard_name', 'api')
                 ->findOrFail($validated['role_id']);
 
-            $user->syncRoles([$role]);
-        }
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+                'active' => $validated['active'] ?? true,
+                'tenant' => $tenant,
+            ]);
 
-        if (
-            array_key_exists('active', $validated)
-            && $validated['active'] === false
-        ) {
-            $user->tokens()->delete();
-        }
-    });
+            $user->assignRole($role);
 
-    return new UserResource(
-        $user->fresh()->load('roles')
-    );
-}
+            return $user;
+        });
+
+        $user->load('roles');
+
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    public function update(
+        UpdateUserRequest $request,
+        User $user
+    ): UserResource {
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated, $user) {
+            $userFields = [];
+
+            foreach (
+                ['name', 'email', 'password', 'active'] as $field
+            ) {
+                if (array_key_exists($field, $validated)) {
+                    $userFields[$field] = $validated[$field];
+                }
+            }
+
+            if ($userFields !== []) {
+                $user->update($userFields);
+            }
+
+            if (array_key_exists('role_id', $validated)) {
+                $role = Role::query()
+                    ->where('guard_name', 'api')
+                    ->findOrFail($validated['role_id']);
+
+                $user->syncRoles([$role]);
+            }
+
+            if (
+                array_key_exists('active', $validated)
+                && $validated['active'] === false
+            ) {
+                $user->tokens()->delete();
+            }
+        });
+
+        return new UserResource(
+            $user->fresh()->load('roles')
+        );
+    }
 
     public function destroy(User $user): Response
     {

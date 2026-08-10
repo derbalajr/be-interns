@@ -66,8 +66,41 @@ class UpdateUnitRequest extends FormRequest
             ],
 
             'status' => [
-                'prohibited',
-            ],
+    'prohibited',
+],
+
+'media' => [
+    'sometimes',
+    'array',
+],
+
+'media.*.id' => [
+    'sometimes',
+    'integer',
+    Rule::exists('unit_media', 'id')
+        ->where(
+            fn ($query) => $query->where(
+                'unit_id',
+                $unit->id
+            )
+        ),
+],
+
+'media.*.type' => [
+    'required',
+    Rule::in([
+        'photo',
+        'floor_plan',
+    ]),
+],
+
+'media.*.file' => [
+    'sometimes',
+    
+    'image',
+    'mimetypes:image/jpeg,image/png,image/webp',
+    'max:5120',
+],
         ];
     }
 }

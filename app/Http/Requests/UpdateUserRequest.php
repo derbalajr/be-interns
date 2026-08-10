@@ -43,10 +43,10 @@ class UpdateUserRequest extends FormRequest
             'role_id' => [
                 'sometimes',
                 'required',
-                 'integer',
-                  Rule::exists('roles', 'id')
-                  
-         ],
+                'integer',
+                Rule::exists('roles', 'id'),
+
+            ],
 
             'active' => [
                 'sometimes',
