@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->foreignId('agent_id')->constrained('users')->onDelete('cascade');
             $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
-            $table->decimal('reserved_price', 10, 2);
+            $table->decimal('reserved_price', 15, 2);
             $table->timestamp('reserved_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -24,11 +24,10 @@ class StoreReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //  $validated = $request->validate([
             'unit_id' => 'required|exists:units,id',
             'client_id' => 'required|exists:clients,id',
-            'reserved_at' => 'required|date',
-
+            // reserved_at is owned by the server (set at reservation time),
+            // so it is intentionally not accepted from the client.
         ];
     }
 }
