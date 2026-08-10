@@ -65,6 +65,27 @@ class StoreUnitRequest extends FormRequest
             'status' => [
                 'prohibited',
             ],
+            'photos' => [
+                'sometimes',
+                'array',
+            ],
+
+            'photos.*' => [
+                'image',
+                'mimetypes:image/jpeg,image/png,image/webp',
+                'max:5120',
+            ],
+
+            'floor_plans' => [
+                'sometimes',
+                'array',
+            ],
+
+            'floor_plans.*' => [
+                'image',
+                'mimetypes:image/jpeg,image/png,image/webp',
+                'max:5120',
+            ],
         ];
     }
 }
