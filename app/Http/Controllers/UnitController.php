@@ -13,6 +13,10 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Reservation;
+use App\Models\Sale;
+use Illuminate\Support\Facades\DB;
+  use Illuminate\Http\Request;
 class UnitController extends Controller
 {
     /**
@@ -249,35 +253,41 @@ public function update(
         return response()->noContent();
     }
 
-    public function markReserved(Unit $unit): UnitResource
-    {
-        Gate::authorize('edit-units');
 
-        if ($unit->status !== Unit::STATUS_AVAILABLE) {
-            abort(422, 'Only an available unit can be reserved.');
-        }
+ public function markSold(Request $request, Unit $unit): UnitResource
+{
+    Gate::authorize('edit-units');
 
-        $unit->status = Unit::STATUS_RESERVED;
-        $unit->save();
-
-        $unit->load('project');
-
-        return new UnitResource($unit);
+    if ($unit->status !== Unit::STATUS_RESERVED) {
+        abort(422, 'Only a reserved unit can be sold.');
     }
 
-    public function markSold(Unit $unit): UnitResource
-    {
-        Gate::authorize('edit-units');
+    $reservation = Reservation::where('unit_id', $unit->id)
+        ->whereIn('status', ['pending', 'confirmed'])
+        ->latest()
+        ->first();
 
-        if ($unit->status !== Unit::STATUS_RESERVED) {
-            abort(422, 'Only a reserved unit can be sold.');
-        }
-
-        $unit->status = Unit::STATUS_SOLD;
-        $unit->save();
-
-        $unit->load('project');
-
-        return new UnitResource($unit);
+    if (! $reservation) {
+        abort(422, 'No active reservation found for this unit.');
     }
+
+    DB::transaction(function () use ($unit, $reservation, $request) {
+        $unit->update([
+            'status' => Unit::STATUS_SOLD,
+        ]);
+
+        Sale::create([
+            'unit_id' => $unit->id,
+            'client_id' => $reservation->client_id,
+            'agent_id' => $request->user()->id,
+            'sale_price' => $reservation->reserved_price,
+            'sold_at' => now(),
+            'notes' => null,
+        ]);
+    });
+
+    $unit->load('project');
+
+    return new UnitResource($unit);
+}
 }

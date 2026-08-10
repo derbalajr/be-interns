@@ -1,14 +1,18 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\HandoverController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SaleController;
 
 // Health check
 Route::get('/health', function () {
@@ -117,14 +121,30 @@ Route::middleware('auth:api')->group(function () {
         Route::match(['put', 'patch'], '/units/{unit}', [UnitController::class, 'update']);
         Route::delete('/units/{unit}', [UnitController::class, 'destroy']);
 
-        Route::patch('/units/{unit}/reserve', [
-            UnitController::class,
-            'markReserved',
-        ]);
 
         Route::patch('/units/{unit}/sell', [
             UnitController::class,
             'markSold',
         ]);
+
+        // Reservations
+        Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::post('/reservations', [ReservationController::class, 'store']);
+        Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
+        Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel']);
+
+        // Clients
+        Route::apiResource('clients', ClientController::class);
+        Route::post('/clients/process-national-id', [ClientController::class, 'processNationalId']);
+
+        // Handovers
+        Route::get('/handovers', [HandoverController::class, 'index']);
+        Route::post('/handovers', [HandoverController::class, 'store']);
+        Route::get('/handovers/{handover}', [HandoverController::class, 'show']);
+        Route::post('/handovers/{handover}/complete', [HandoverController::class, 'complete']);
+
+        //Sales
+        Route::get('/sales', [SaleController::class, 'index']);
+        Route::get('/sales/{sale}', [SaleController::class, 'show']);
     });
 });

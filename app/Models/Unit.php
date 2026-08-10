@@ -52,4 +52,13 @@ class Unit extends Model
     {
         return $this->hasMany(UnitMedia::class); // One unit can have many media records
     }
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function sale()
+   {
+    return $this->hasOne(Sale::class);
+   }
 }
