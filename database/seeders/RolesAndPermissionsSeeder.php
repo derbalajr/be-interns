@@ -103,7 +103,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'create-handovers',
             'complete-handovers',
             'view-sales',
-
+            'view-projects',
+            'create-projects',
+            'update-projects',
+            
         ]);
 
         $adminRole->syncPermissions([
