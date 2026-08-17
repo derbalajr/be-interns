@@ -22,9 +22,11 @@ class StoreHandoverRequest extends FormRequest
      */
     public function rules(): array
     {
+        // The client is not accepted from the request — it is derived from the
+        // unit's reservation so a handover can never be filed against the wrong
+        // client. See HandoverController::store.
         return [
             'unit_id' => 'required|exists:units,id',
-            'client_id' => 'required|exists:clients,id',
             'handover_date' => 'required|date|after_or_equal:today',
             'notes' => 'nullable|string',
         ];

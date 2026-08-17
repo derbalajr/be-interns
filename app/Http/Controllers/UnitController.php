@@ -276,6 +276,11 @@ public function update(
             'status' => Unit::STATUS_SOLD,
         ]);
 
+        // The sale confirms the reservation (pending -> confirmed).
+        $reservation->update([
+            'status' => 'confirmed',
+        ]);
+
         Sale::create([
             'unit_id' => $unit->id,
             'client_id' => $reservation->client_id,
