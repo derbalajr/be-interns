@@ -6,6 +6,7 @@ use App\Models\UnitMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UnitResource extends JsonResource
 {
@@ -35,7 +36,7 @@ class UnitResource extends JsonResource
                     ->values()
                     ->map(fn ($media) => [
                         'id' => $media->id,
-                        'url' => Storage::url($media->path),
+                        'url' => $this->mediaUrl($media->path),
                     ])
             ),
 
@@ -46,12 +47,23 @@ class UnitResource extends JsonResource
                     ->values()
                     ->map(fn ($media) => [
                         'id' => $media->id,
-                        'url' => Storage::url($media->path),
+                        'url' => $this->mediaUrl($media->path),
                     ])
             ),
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+    }
+
+    /**
+     * Resolve a media path to a URL. Uploaded files live on the storage disk;
+     * seeded demo photos store an absolute http(s) URL, which is returned as-is.
+     */
+    private function mediaUrl(string $path): string
+    {
+        return Str::startsWith($path, ['http://', 'https://'])
+            ? $path
+            : Storage::url($path);
     }
 }
