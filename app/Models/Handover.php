@@ -13,6 +13,7 @@ class Handover extends Model
 
     protected $fillable = [
         'unit_id',
+        'reservation_id',
         'client_id',
         'handover_date',
         'status',
@@ -26,6 +27,11 @@ class Handover extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function reservation(): BelongsTo
+    {
+        return $this->belongsTo(Reservation::class);
     }
 
     public function client(): BelongsTo
